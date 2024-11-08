@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:weather/controller/weather_controller.dart';
+
+
 import 'package:weather/utilis/colors.dart';
 import 'package:weather/utilis/constants.dart';
 import 'package:weather/views/location_screen.dart';
 import 'package:weather/views/setting_screen.dart';
+
+//import '../controller/weather_controller.dart';
 //import 'package:flutter/widgets.dart';
 //import 'package:weather/utilis/colors.dart';
 
@@ -15,9 +21,21 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
+//late WeatherController weatherController;
+  void initState() {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+      // context.read().of<WeatherController>(context, listen: false);
+      context.read<WeatherController>().getcurrentWeather();
+    });
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
+    // final weatherController=
+    // Provider.of<WeatherController>(context, listen: false);
     return Scaffold(
 
    body:
@@ -25,13 +43,28 @@ class _HomeScreenState extends State<HomeScreen> {
      child: Column(
        children: [
 
-        Row(),
+        const Row(),
         kheight25,
+        
+        WeatherController().isLoading?
+        const Center(
+          child:CircularProgressIndicator(),
+        ):
+        WeatherController().weatherResponseModel == null?
+        const Center(
+
+          child: Text("No data found!!"),
+        ):
+        //  WeatherController.isLoading?
+        //  const Center(
+        //   child: CircularProgressIndicator,
+        //  ):
+        
          Container(
           padding: EdgeInsets.all(10),
          
           width: 358,
-          height: 564,
+          height: 600,
            decoration: BoxDecoration(
          
          gradient: LinearGradient(colors:[lightBlue,DarkBlue], 
@@ -54,10 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
                     Icon(Icons.add,color: whiteprimary,
                     size: 32,),
              
-                    Text("Malang",style: TextStyle(fontWeight: FontWeight.w700,color: whiteprimary,fontSize: 16),
+                    Text(
+                       WeatherController().weatherResponseModel!.name ,
+                      // "Malang",
+                      style: TextStyle(
+                        fontWeight: FontWeight.w700,color: whiteprimary,fontSize: 16),
                     ),
                     
-             
+             //dropdown
             IconButton(onPressed: (){
               Navigator.push(context, MaterialPageRoute(builder: (context) => LocationScreen(),
               ));
@@ -70,29 +107,56 @@ class _HomeScreenState extends State<HomeScreen> {
            },
             icon:  Icon(Icons.settings,
              color: whiteprimary,
-                    size: 32,),)
+                    size: 28,),)
                     )
                   ],
                 ),
 
-                Image.asset("assets\images\Sun cloud angled rain.png"),
-                Text("Sunday  |  Nov 21",
+                Image.asset("assets/images/Sun cloud angled rain.png"),
+                Text(
+                  "Sunday  |  Nov 21",
                 style: TextStyle(color: whiteprimary,fontSize: 16),
                 ),
-              Text("24",style: TextStyle(color: whiteprimary,
+              Text(
+                 WeatherController().weatherResponseModel!.main.temp.toString() ,
+                //"24",
+                style: TextStyle(color: whiteprimary,
               fontSize: 72,fontWeight: FontWeight.bold),
               
               ),
-                Text("Heavy rain",
+                Text(
+                   WeatherController().weatherResponseModel!.weather[0].main,
+                  //"Heavy rain",
                 style: TextStyle(color: whiteprimary,fontSize: 16),
                 ),
 Divider(
   color: whiteprimary,
 
+
 ),
 
 
+
 //grid session starting
+
+
+// Row(
+//   children: [
+//      SvgPicture.asset("assets/svgs/carbon_location-current.svg"),
+//      kwidth5,
+//      Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//        children: [
+//                Text("3.7km/hr",
+//                   style: TextStyle(color: whiteprimary,fontSize: 12),
+//                   ),
+//                    Text("wind",
+//                   style: TextStyle(color: whiteprimary,fontSize: 12),
+//                   ),]
+  
+//      )
+//   ],
+// ),
 
 
 
@@ -105,12 +169,15 @@ Padding(
   
         
         children: [
-          SvgPicture.asset("assets\svgs\carbon_location-current.svg"),
+          SvgPicture.asset("assets/svgs/carbon_location-current.svg"),
           kwidth5,
           Column(
   crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text("3.7km/hr",
+               Text(
+                 " ${WeatherController().weatherResponseModel!.wind.speed.toString()}km/hr",
+                
+                //"3.7km/hr",
                   style: TextStyle(color: whiteprimary,fontSize: 12),
                   ),
                    Text("wind",
@@ -127,15 +194,19 @@ Padding(
   
       Row(
         children: [
-          SvgPicture.asset("assets\svgs\Indicator.svg"),
+          SvgPicture.asset("assets/svgs/Indicator.svg"),
           kwidth5,
           Column(
   crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text("74%",
+               Text(
+                 
+                 
+                 "${ WeatherController().weatherResponseModel!.clouds.all}",
+                //"74%",
                   style: TextStyle(color: whiteprimary,fontSize: 12),
                   ),
-                   Text("Chance of rain",
+                   Text("clouds                 ",
                   style: TextStyle(color: whiteprimary,fontSize: 12),
                   ),
   
@@ -159,12 +230,14 @@ Padding(
     children: [
       Row(
         children: [
-          SvgPicture.asset("assets\svgs\Pressure.svg"),
+          SvgPicture.asset("assets/svgs/Pressure.svg"),
           kwidth5,
           Column(
   crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text("1010 mba",
+               Text(
+                 "${WeatherController().weatherResponseModel!.main.pressure.toString()}mbar",
+                //"1010 mba",
                   style: TextStyle(color: whiteprimary,fontSize: 12),
                   ),
                    Text("Pressure",
@@ -178,61 +251,49 @@ Padding(
         
       ),
   
+      Row(
+        children: [
+          SvgPicture.asset("assets/svgs/sHumidity.svg"),
+          kwidth5,
+          Column(
+  crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+               Text(
+                "${WeatherController().weatherResponseModel!.main.humidity}",
+                
+                //"83%",
+                  style: TextStyle(color: whiteprimary,fontSize: 12),
+                  ),
+                   Text("Humidity 83%",
+                  style: TextStyle(color: whiteprimary,fontSize: 12),
+                  ),
   
-      Padding(
-        padding: const EdgeInsets.only(right: 12),
-        child: Row(
-          children: [
-            SvgPicture.asset("assets\svgs\Humidity.svg"),
-            kwidth5,
-            Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                 Text("83%",
-                    style: TextStyle(color: whiteprimary,fontSize: 12),
-                    ),
-                     Text("Humidity 83%",
-                    style: TextStyle(color: whiteprimary,fontSize: 12),
-                    ),
-          
-          
-              ],
-            )
-          ],
-          
-        ),
+  
+            ],
+          )
+        ],
+        
       )
-    ],
-  ),
-)
+  
 
-
-// GridView.count(
-//   crossAxisCount: 2,
-// crossAxisSpacing: 10.0,
-// mainAxisSpacing: 10.0,
-// shrinkWrap: true,
-// children: List.generate(20,(Index){
-//   return Row(
-//     children: [],
-//   );
-// }
-// ),
-
-//   )
               ],
 
 
 
              ),
            ),
-         ),
+         
        ],
      ),
    )
 
     
-    
+         )
+       ]
+     
+    )
+   )
     );
+   
   }
 }

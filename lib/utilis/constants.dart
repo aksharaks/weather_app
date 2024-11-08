@@ -1,8 +1,11 @@
+import 'dart:core';
+//import 'dart:nativewrappers/_internal/vm/lib/core_patch.dart';
+
 import 'package:flutter/material.dart';
 
 const String fontFamily ="Poppins";
 
-const String Apikey ="";
+const String apikey ="4e3583e70af802f7d7316d0c20808b34";
 
 
 //sizedbox

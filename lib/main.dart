@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:weather/controller/weather_controller.dart';
 import 'package:weather/views/home_screen.dart';
+import 'package:weather/views/home_screen1.dart';
+import 'package:weather/views/location_screen.dart';
+import 'package:weather/views/setting_screen.dart';
+
 
 void main() {
   runApp(ChangeNotifierProvider(
